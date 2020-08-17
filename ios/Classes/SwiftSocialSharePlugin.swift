@@ -1,14 +1,36 @@
 import Flutter
+import FBSDKCoreKit
+import FBSDKShareKit
 import UIKit
 import Foundation
 import SystemConfiguration
 
 public class SwiftSocialSharePlugin: NSObject, FlutterPlugin {
     
+    var controller: UIViewController!
+    var messenger: FlutterBinaryMessenger
+    
+    init(cont: UIViewController, messenger: FlutterBinaryMessenger) {
+        self.controller = cont
+        self.messenger = messenger
+        super.init();
+    }
+    
     public static func register(with registrar: FlutterPluginRegistrar) {
-        let channel = FlutterMethodChannel(name: "social-share", binaryMessenger: registrar.messenger())
-        let instance = SwiftSocialSharePlugin()
-        registrar.addApplicationDelegate(instance)
+        let channel = FlutterMethodChannel(name: "social_share", binaryMessenger: registrar.messenger())
+        let app =  UIApplication.shared
+        let rootController = app.delegate!.window!!.rootViewController
+        var flutterController: FlutterViewController? = nil
+        if rootController is FlutterViewController {
+            flutterController = rootController as! FlutterViewController
+        } else if app.delegate is FlutterAppDelegate {
+            if (app.delegate?.responds(to: Selector("flutterEngine")))! {
+                let engine: FlutterEngine? = app.delegate?.perform(Selector("flutterEngine"))?.takeRetainedValue() as! FlutterEngine
+                flutterController = engine?.viewController
+            }
+        }
+        let controller : UIViewController = flutterController ?? rootController!;
+        let instance = SwiftSocialSharePlugin.init(cont: controller, messenger: registrar.messenger())
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
     
@@ -25,8 +47,9 @@ public class SwiftSocialSharePlugin: NSObject, FlutterPlugin {
                     do {
                         let postShare = try JSONDecoder().decode(PostShare.self, from: data)
                         message = postShare.message
-                        phoneNumber = postShare.phoneNumber
-                    } catch let error {
+                        phoneNumber = postShare.phoneNumber ?? ""
+                        print(message)
+                    } catch let _ {
                         message = ""
                         phoneNumber = ""
                     }
@@ -59,22 +82,22 @@ public class SwiftSocialSharePlugin: NSObject, FlutterPlugin {
                 })
             } else if(call.method == "shareTwitter"){
                 var message : String = ""
-                var phoneNumber : String = ""
                 DispatchQueue.background(background: {
                     let urlString = call.arguments as? String ?? ""
                     let data = urlString.data(using: .utf8)!
                     do {
                         let postShare = try JSONDecoder().decode(PostShare.self, from: data)
                         message = postShare.message
-                    } catch let error {
+                        print(message)
+                    } catch let _ {
                         message = ""
                     }
                 }, completion:{
                     let urlScheme = URL(string: "twitter://post?message=" + message)
                     if let urlScheme = urlScheme {
                         if UIApplication.shared.canOpenURL(urlScheme) {
-                           UIApplication.shared.openURL(urlScheme)
-                           result("Success")
+                            UIApplication.shared.openURL(urlScheme)
+                            result("Success")
                         } else {
                             result("App not installed")
                         }
@@ -83,26 +106,33 @@ public class SwiftSocialSharePlugin: NSObject, FlutterPlugin {
                     }
                 })
             } else if(call.method == "shareFacebook"){
-                              var message : String = ""
-                              var phoneNumber : String = ""
-                              DispatchQueue.background(background: {
-                                  let urlString = call.arguments as? String ?? ""
-                                  let data = urlString.data(using: .utf8)!
-                                  do {
-                                      let postShare = try JSONDecoder().decode(PostShare.self, from: data)
-                                      message = postShare.message
-                                  } catch let error {
-                                      message = ""
-                                  }
-                              }, completion:{
-                                 let content:FBSDKShareLinkContent! = FBSDKShareLinkContent()
-                                     content.contentURL = URL(message)
-                                     FBSDKShareDialog.showFromViewController(self,
-                                                                   withContent:content,
-                                                                      delegate:nil)
-                                     result("Success")
-                              })
-                          }
+                var message : String = ""
+                DispatchQueue.background(background: {
+                    let urlString = call.arguments as? String ?? ""
+                    let data = urlString.data(using: .utf8)!
+                    do {
+                        let postShare = try JSONDecoder().decode(PostShare.self, from: data)
+                        message = postShare.message
+                        print(message)
+                    } catch let _ {
+                        message = ""
+                    }
+                }, completion:{
+                    let urlScheme = URL(string: "fbauth2://")
+                    if let urlScheme = urlScheme {
+                        if UIApplication.shared.canOpenURL(urlScheme) {
+                            UIApplication.shared.openURL(urlScheme)
+                            let content:ShareLinkContent! = ShareLinkContent()
+                            content.contentURL = URL(string : message)!
+                            ShareDialog.init(fromViewController: self.controller, content:content, delegate:nil).show()
+                        } else {
+                            result("App not installed")
+                        }
+                    } else {
+                        result("Something went wrong, Please try again")
+                    }
+                })
+            }
         }
     }
     
@@ -135,7 +165,6 @@ public class SwiftSocialSharePlugin: NSObject, FlutterPlugin {
 }
 
 extension DispatchQueue {
-    
     static func background(delay: Double = 0.0, background: (()->Void)? = nil, completion: (() -> Void)? = nil) {
         DispatchQueue.global(qos: .background).async {
             background?()

@@ -1,11 +1,28 @@
 PODS:
+  - FBSDKCoreKit (7.1.1):
+    - FBSDKCoreKit/Basics (= 7.1.1)
+    - FBSDKCoreKit/Core (= 7.1.1)
+  - FBSDKCoreKit/Basics (7.1.1)
+  - FBSDKCoreKit/Core (7.1.1):
+    - FBSDKCoreKit/Basics
+  - FBSDKShareKit (7.1.1):
+    - FBSDKShareKit/Share (= 7.1.1)
+  - FBSDKShareKit/Share (7.1.1):
+    - FBSDKCoreKit (~> 7.1.1)
   - Flutter (1.0.0)
   - social_share (0.0.1):
+    - FBSDKCoreKit
+    - FBSDKShareKit
     - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - social_share (from `.symlinks/plugins/social_share/ios`)
+
+SPEC REPOS:
+  trunk:
+    - FBSDKCoreKit
+    - FBSDKShareKit
 
 EXTERNAL SOURCES:
   Flutter:
@@ -14,8 +31,10 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/social_share/ios"
 
 SPEC CHECKSUMS:
+  FBSDKCoreKit: b46507dc8b8cefed31d644e74d7cc30e2a715ef8
+  FBSDKShareKit: 00a055c1999b099596e00212dd1c0600c6697019
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  social_share: 2efaca98f1fe0a25423775c1554000445d2ddd24
+  social_share: 7daee580423c4f168942b716bad979483d43bc5d
 
 PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
 

@@ -100,6 +100,7 @@ public class SwiftSocialSharePlugin: NSObject, FlutterPlugin {
                                      FBSDKShareDialog.showFromViewController(self,
                                                                    withContent:content,
                                                                       delegate:nil)
+                                     result("Success")
                               })
                           }
         }

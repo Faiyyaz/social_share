@@ -31,7 +31,7 @@ public class SwiftSocialSharePlugin: NSObject, FlutterPlugin {
                         phoneNumber = ""
                     }
                 }, completion:{
-                   if(message != "" || phoneNumber !=  ""){
+                    if(message != "" || phoneNumber !=  ""){
                         let urlScheme = URL(string: "whatsapp://send?text=" + message + "&phone=" + phoneNumber)
                         if let urlScheme = urlScheme {
                             if UIApplication.shared.canOpenURL(urlScheme) {
@@ -44,18 +44,18 @@ public class SwiftSocialSharePlugin: NSObject, FlutterPlugin {
                             result("Something went wrong, Please try again")
                         }
                     } else {
-                                                let urlScheme = URL(string: "whatsapp://send?text=" + message)
-                                                if let urlScheme = urlScheme {
-                                                    if UIApplication.shared.canOpenURL(urlScheme) {
-                                                        UIApplication.shared.openURL(urlScheme)
-                                                        result("Success")
-                                                    } else {
-                                                        result("App not installed")
-                                                    }
-                                                } else {
-                                                    result("Something went wrong, Please try again")
-                                                }
-                                            }
+                        let urlScheme = URL(string: "whatsapp://send?text=" + message)
+                        if let urlScheme = urlScheme {
+                            if UIApplication.shared.canOpenURL(urlScheme) {
+                                UIApplication.shared.openURL(urlScheme)
+                                result("Success")
+                            } else {
+                                result("App not installed")
+                            }
+                        } else {
+                            result("Something went wrong, Please try again")
+                        }
+                    }
                 })
             } else if(call.method == "shareTwitter"){
                 var message : String = ""
@@ -74,15 +74,15 @@ public class SwiftSocialSharePlugin: NSObject, FlutterPlugin {
                 }, completion:{
                     let urlScheme = URL(string: "twitter://")
                     if let urlScheme = urlScheme {
-                                                                        if UIApplication.shared.canOpenURL(urlScheme) {
-                                                                            UIApplication.shared.openURL(urlScheme)
-
-                                                                        } else {
-                                                                            result("App not installed")
-                                                                        }
-                                                                    } else {
-                                                                        result("Something went wrong, Please try again")
-                                                                    }
+                        if UIApplication.shared.canOpenURL(urlScheme) {
+                            UIApplication.shared.openURL(urlScheme)
+                            
+                        } else {
+                            result("App not installed")
+                        }
+                    } else {
+                        result("Something went wrong, Please try again")
+                    }
                 })
             }
         }

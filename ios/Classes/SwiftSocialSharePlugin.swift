@@ -60,11 +60,53 @@ public class SwiftSocialSharePlugin: NSObject, FlutterPlugin {
                         result("Something went wrong, Please try again")
                     }
                 })
-            } else {
-                result("Something went wrong, Please try again")
+            } else if(call.method == "shareTwitter") {
+                 var message : String = ""
+                                 var phoneNumber : String = ""
+                                 DispatchQueue.background(background: {
+                                     let urlString = call.arguments as? String ?? ""
+                                     let data = urlString.data(using: .utf8)!
+                                     do {
+                                         let facebookPostBean = try JSONDecoder().decode(PostShare.self, from: data)
+                                         message = facebookPostBean.message
+                                         phoneNumber = facebookPostBean.phoneNumber
+                                     } catch let error {
+                                         message = ""
+                                         phoneNumber = ""
+                                     }
+                                 }, completion:{
+                                     if(message != ""){
+                                         let urlScheme = URL(string: "whatsapp://send?text=" + message)
+                                         if let urlScheme = urlScheme {
+                                             if UIApplication.shared.canOpenURL(urlScheme) {
+                                                 UIApplication.shared.openURL(urlScheme)
+                                                 result("Success")
+                                             } else {
+                                                 result("App not installed")
+                                             }
+                                         } else {
+                                             result("Something went wrong, Please try again")
+                                         }
+                                     } else if(message != "" || phoneNumber !=  ""){
+                                         let urlScheme = URL(string: "whatsapp://send?text=" + message + "&phone=" + phoneNumber)
+                                         if let urlScheme = urlScheme {
+                                             if UIApplication.shared.canOpenURL(urlScheme) {
+                                                 UIApplication.shared.openURL(urlScheme)
+                                                 result("Success")
+                                             } else {
+                                                 result("App not installed")
+                                             }
+                                         } else {
+                                             result("Something went wrong, Please try again")
+                                         }
+                                     }
+                                     else {
+                                         result("Something went wrong, Please try again")
+                                     }
+                                 })
+              }
             }
         }
-    }
     
     func isConnectedToNetwork() -> Bool {
         var zeroAddress = sockaddr_in()

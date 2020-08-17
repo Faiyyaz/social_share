@@ -66,17 +66,15 @@ public class SwiftSocialSharePlugin: NSObject, FlutterPlugin {
                     do {
                         let postShare = try JSONDecoder().decode(PostShare.self, from: data)
                         message = postShare.message
-                        phoneNumber = postShare.phoneNumber
                     } catch let error {
                         message = ""
-                        phoneNumber = ""
                     }
                 }, completion:{
-                    let urlScheme = URL(string: "twitter://")
+                    let urlScheme = URL(string: "twitter://post?message=" + message)
                     if let urlScheme = urlScheme {
                         if UIApplication.shared.canOpenURL(urlScheme) {
-                            UIApplication.shared.openURL(urlScheme)
-                            
+                           UIApplication.shared.openURL(urlScheme)
+                           result("Success")
                         } else {
                             result("App not installed")
                         }
@@ -84,7 +82,26 @@ public class SwiftSocialSharePlugin: NSObject, FlutterPlugin {
                         result("Something went wrong, Please try again")
                     }
                 })
-            }
+            } else if(call.method == "shareFacebook"){
+                              var message : String = ""
+                              var phoneNumber : String = ""
+                              DispatchQueue.background(background: {
+                                  let urlString = call.arguments as? String ?? ""
+                                  let data = urlString.data(using: .utf8)!
+                                  do {
+                                      let postShare = try JSONDecoder().decode(PostShare.self, from: data)
+                                      message = postShare.message
+                                  } catch let error {
+                                      message = ""
+                                  }
+                              }, completion:{
+                                 let content:FBSDKShareLinkContent! = FBSDKShareLinkContent()
+                                     content.contentURL = URL(message)
+                                     FBSDKShareDialog.showFromViewController(self,
+                                                                   withContent:content,
+                                                                      delegate:nil)
+                              })
+                          }
         }
     }
     

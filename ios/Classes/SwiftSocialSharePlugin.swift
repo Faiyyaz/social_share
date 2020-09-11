@@ -55,6 +55,7 @@ public class SwiftSocialSharePlugin: NSObject, FlutterPlugin {
                     }
                 }, completion:{
                     if(message != "" || phoneNumber !=  ""){
+                        message = message.addingPercentEncoding(withAllowedCharacters:CharacterSet.urlQueryAllowed) ?? ""
                         let urlScheme = URL(string: "whatsapp://send?text=" + message + "&phone=" + phoneNumber)
                         if let urlScheme = urlScheme {
                             if UIApplication.shared.canOpenURL(urlScheme) {
@@ -67,6 +68,7 @@ public class SwiftSocialSharePlugin: NSObject, FlutterPlugin {
                             result("Something went wrong, Please try again")
                         }
                     } else {
+                        message = message.addingPercentEncoding(withAllowedCharacters:CharacterSet.urlQueryAllowed) ?? ""
                         let urlScheme = URL(string: "whatsapp://send?text=" + message)
                         if let urlScheme = urlScheme {
                             if UIApplication.shared.canOpenURL(urlScheme) {
@@ -93,6 +95,7 @@ public class SwiftSocialSharePlugin: NSObject, FlutterPlugin {
                         message = ""
                     }
                 }, completion:{
+                    message = message.addingPercentEncoding(withAllowedCharacters:CharacterSet.urlQueryAllowed) ?? ""
                     let urlScheme = URL(string: "twitter://post?message=" + message)
                     if let urlScheme = urlScheme {
                         if UIApplication.shared.canOpenURL(urlScheme) {

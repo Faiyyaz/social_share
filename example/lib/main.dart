@@ -32,7 +32,7 @@ class _MyAppState extends State<MyApp> {
               onPressed: () async {
                 String sendStatus;
                 PostShare postShare = PostShare(
-                  message: 'Hello',
+                  message: 'Hello testing share plugin',
                   type: 'text',
                 );
                 sendStatus = await SocialShare.shareWhatsApp(

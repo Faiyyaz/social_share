@@ -118,19 +118,10 @@ public class SwiftSocialSharePlugin: NSObject, FlutterPlugin {
                         message = ""
                     }
                 }, completion:{
-                    let urlScheme = URL(string: "fbauth2://")
-                    if let urlScheme = urlScheme {
-                        if UIApplication.shared.canOpenURL(urlScheme) {
-                            UIApplication.shared.openURL(urlScheme)
-                            let content:ShareLinkContent! = ShareLinkContent()
-                            content.contentURL = URL(string : message)!
-                            ShareDialog.init(fromViewController: self.controller, content:content, delegate:nil).show()
-                        } else {
-                            result("App not installed")
-                        }
-                    } else {
-                        result("Something went wrong, Please try again")
-                    }
+                    let content:ShareLinkContent! = ShareLinkContent()
+                    content.contentURL = URL(string : message)!
+                    ShareDialog.init(fromViewController: self.controller, content:content, delegate:nil).show()
+                    result("Success")
                 })
             }
         }

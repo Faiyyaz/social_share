@@ -1,4 +1,4 @@
-import Flutter
+import Flutter
 import FBSDKCoreKit
 import FBSDKShareKit
 import UIKit
@@ -121,7 +121,7 @@ public class SwiftSocialSharePlugin: NSObject, FlutterPlugin {
                     let content:ShareLinkContent! = ShareLinkContent()
                     content.contentURL = URL(string : message)!
                     ShareDialog.init(fromViewController: self.controller, content:content, delegate:nil).show()
-                    result("Success")
+                    result("Success") 
                 })
             }
         }
@@ -167,4 +167,3 @@ extension DispatchQueue {
         }
     }
 }
-
